@@ -65,3 +65,9 @@ It should support windows (confirm this for me)
 - Styling with css
 - Raw javascript
 - Resources (it actually does not allow anything else)
+
+Issues
+===========================
+Does it work on windows? osx? It should...
+
+I cannot test all browsers, so I only know what works in chrome and i think radioboxes have some issues on firefox or is the eventhandler..?

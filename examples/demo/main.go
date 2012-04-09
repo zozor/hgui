@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/zozor/webgui/hgui"
+	"github.com/zozor/hgui"
 	"fmt"
 )
 
@@ -167,7 +167,7 @@ func main() {
 	hgui.Topframe.Add(
 		hgui.NewButton("Reset Topframe", nil, func() {
 			hgui.Topframe.Flip()
-		}), hgui.Html("<br/>"),
+		}), hgui.Html("Dont press this button, it clears all events :D<br/>"),
 		
 		hgui.NewButton("Hide table", nil, func() {
 			toptable.Hide()

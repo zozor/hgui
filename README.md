@@ -24,24 +24,24 @@ To make a simple interface, no knowledge of html, javascript or css is needed. F
 Here is a simple program. An advanced one can be found in examples
 
 
-		package main
+	package main
 
-		import "github.com/zozor/hgui"
+	import "github.com/zozor/hgui"
 
-		func main() {
-			label := hgui.NewLabel("Simple label")
-			input := hgui.NewTextinput("", hgui.TextType_Text)
-			hgui.Topframe.Add(
-				input, 
-				hgui.NewButton("New Text!", nil, func() {
-					label.SetValue(input.Value())
-					label.SetStyle(hgui.Style{"color":"blue"})
-				}),
-				hgui.Html("<br/>"), 
-				label,
-			)
-			hgui.StartServer(20000)
-		}
+	func main() {
+		label := hgui.NewLabel("Simple label")
+		input := hgui.NewTextinput("", hgui.TextType_Text)
+		hgui.Topframe.Add(
+			input, 
+			hgui.NewButton("New Text!", nil, func() {
+				label.SetValue(input.Value())
+				label.SetStyle(hgui.Style{"color":"blue"})
+			}),
+			hgui.Html("<br/>"), 
+			label,
+		)
+		hgui.StartServer(20000)
+	}
 
 Features
 ===========================

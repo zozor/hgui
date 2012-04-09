@@ -1,13 +1,5 @@
 /*
 hgui is a gui toolkit for webgui
-
-Sinces the server cannot connect to the server, the browser will ask for events as often(?) as possible
-You set up your layout using bindings.
-
-Når man Set'er, sættes en event op, som hentes af javascript som så sætter whatever.
-Man kan sende javascript kode til events
-Når man Get'ter, sættes en event op, som returnere svar via channel
-
 */
 package hgui
 
@@ -87,6 +79,7 @@ type event struct {
 	reply      chan string
 }
 
+//Makes an event that can be send to the browser
 func Event(js string, reply chan string) event {
 	return event{replyid.New(""), js, reply}
 }
@@ -138,6 +131,7 @@ func eventReply(r reply) {
 	}	
 }
 
+//Sends and Event to the browser
 func SendEvent(js string, reply chan string) {
 	events <- Event(js, reply)
 }
@@ -201,6 +195,8 @@ func (i *unique) Remove(id string) {
 //=============================================
 //  Style  //
 //=============================================
+
+//CSS map
 type Style map[string]string
 
 func (s Style) Marshal() string {
@@ -211,6 +207,7 @@ func (s Style) Marshal() string {
 	return strings.Join(buf, ";")
 }
 
+//Creates a Style type from a string
 func UnmarshalStyle(style string) (Style, error) {
 	out := Style{}
 	for _, v := range strings.Split(style, ";") {
@@ -223,12 +220,14 @@ func UnmarshalStyle(style string) (Style, error) {
 	return out, nil
 }
 
+//Add more css to your style
 func (s Style) AddStyle(n Style) {
 	for k, v := range n {
 		s[k] = v
 	}
 }
 
+//Remove some css from your style
 func (s Style) RemoveStyle(n Style) {
 	for k, _ := range n {
 		delete(s, k)
@@ -238,6 +237,7 @@ func (s Style) RemoveStyle(n Style) {
 //=============================================
 //  Widget  //
 //=============================================
+
 type HTMLer interface {
 	HTML() string
 }

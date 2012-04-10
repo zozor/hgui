@@ -7,14 +7,10 @@ package hgui
 import (
 	"net/http"
 	"os"
-	"time"
 	"fmt"
 )
 
 var firstTimeRequest = true
-
-//Allow the user to open the gui in more tabs. This is not recommended and for DEBUG ONLY
-var AllowMoreRequests = false
 
 var resources = map[string][]byte{}
 func SetResource(files map[string][]byte) {
@@ -24,40 +20,23 @@ func SetResource(files map[string][]byte) {
 var handlers = map[string]func() {}
 var Topframe = &frame{newWidget(), make([]HTMLer, 0, 20), true}
 
-//Killing the server when not active
-var pingChannel chan bool
-
-func dieCounter() {
-	for {
-		select {
-		case <-pingChannel:
-			continue
-		case <-time.After(10e9):
-			os.Exit(0)
-		}
-	}
-}
-
 //This starts the server with the address addr. should be localhost:23192 (or some other port)
-func StartServer(port int) { //"127.0.0.1:3939"
+func StartServer(width, height, port int, title string) { //"127.0.0.1:3939"
 	http.Handle("/", http.HandlerFunc(requests))
 	addr := fmt.Sprintf("127.0.0.1:%d", port)
 	
-	openBrowser(addr)
-
-	pingChannel = make(chan bool)
-	go dieCounter()
-
-	err := http.ListenAndServe(addr, nil)
-	if err != nil {
-		fmt.Println(err)
-		fmt.Println("You need to wait atleast 10 seconds before you start this program again")
-	}
+	go func() {
+		err := http.ListenAndServe(addr, nil)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+	}()
+	startGui(width, height, title, port)
 }
 
 func requests(w http.ResponseWriter, req *http.Request) {
 	if req.URL.Path == "/events" {
-		pingChannel <- true
 		eventPoll(w)
 		return
 	}
@@ -78,8 +57,8 @@ func requests(w http.ResponseWriter, req *http.Request) {
 	}
 	
 	if req.URL.Path == "/" {
-		if !firstTimeRequest && !AllowMoreRequests {
-			w.Write([]byte("Refrehed? Restart server.<br/>New tab? don't do that :)"))
+		if !firstTimeRequest {
+			os.Exit(0)
 			return
 		}
 		firstTimeRequest = false

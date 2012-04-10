@@ -94,7 +94,8 @@ func main() {
 	ramme.Add(
 		textinput, hgui.Html("<br/>"),
 		textarea, hgui.Html("<br/>"),
-		radio1,radio2, hgui.Html("<br/>"),
+		radio1,hgui.Html("Pressing here gets input from textinput <br/>"), 
+		radio2, hgui.Html("Pressing here gets input from textarea <br/>"),
 		radio3, hgui.Html("<br/>"),	
 		knap1, knap2, knap3, knap4, hgui.Html("<br/>"),
 		
@@ -129,7 +130,8 @@ func main() {
 				hgui.NewListItem("monster 1"),
 				hgui.NewListItem("monster 2"),
 			)
-		}),
+		}),hgui.Html("<br/>"),
+		hgui.NewLink("#", hgui.NewImage("/pics/test.jpg")),
 	)
 	
 	/*Test of Select input*/
@@ -163,41 +165,61 @@ func main() {
 		}),
 	)
 	
+	ramme.Hide()
+	ramme3.Hide()
+	ramme4.Hide()
 	/*Test of Buttons, widget type, link and image*/
 	hgui.Topframe.Add(
-		hgui.NewButton("Reset Topframe", nil, func() {
-			hgui.Topframe.Flip()
-		}), hgui.Html("Dont press this button, it clears all events :D<br/>"),
-		
-		hgui.NewButton("Hide table", nil, func() {
-			toptable.Hide()
-		}),hgui.Html("<br/>"),
-		
-		hgui.NewButton("Show table", nil, func() {
+		hgui.NewButton("Frame 1", nil, func() {
 			toptable.Show()
-		}),hgui.Html("<br/>"),
+			ramme.Hide()
+			ramme3.Hide()
+			ramme4.Hide()
+		}),
+		
+		hgui.NewButton("Frame 2", nil, func() {
+			toptable.Hide()
+			ramme.Show()
+			ramme3.Hide()
+			ramme4.Hide()
+		}),
+		
+		hgui.NewButton("Frame 4", nil, func() {
+			toptable.Hide()
+			ramme.Hide()
+			ramme3.Show()
+			ramme4.Hide()
+		}),
+		
+		hgui.NewButton("Frame 5", nil, func() {
+			toptable.Hide()
+			ramme.Hide()
+			ramme3.Hide()
+			ramme4.Show()
+		}),
+		
+		hgui.Html("<br/>"),
 		
 		hgui.NewButton("Remove Style", nil, func() {
 			hgui.Topframe.RemoveStyle(hgui.Style{"background-color":"red"})
-		}),hgui.Html("<br/>"),
+		}),
 		
 		hgui.NewButton("Add Style", nil, func() {
 			hgui.Topframe.AddStyle(hgui.Style{"background-color":"red"})
-		}),hgui.Html("<br/>"),
+		}),
 		
 		hgui.NewButton("Set Attribute", nil, func() {
 			hgui.Topframe.SetAttribute("bgcolor", "green")
-		}),hgui.Html("<br/>"),
+		}),
 		
 		hgui.NewButton("Remove Attribute", nil, func() {
 			hgui.Topframe.RemoveAttribute("bgcolor")
-		}),hgui.Html("<br/>"),
+		}),
 		
 		toptable,
 		ramme,
-		hgui.NewLink("#", hgui.NewImage("/pics/test.jpg")),
 		ramme3,hgui.Html("<br/>"),hgui.Html("<br/>"),
 		ramme4,
 	)
-	hgui.StartServer(20000)
+	hgui.StartServer(800,600,20000, "Demo!")
 }

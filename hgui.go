@@ -67,8 +67,16 @@ var (
 )
 
 //=============================================
-//  css property Declartions  //
+//  css Declartions  //
 //=============================================
+
+func Css_bgcolor(color string) Style {
+	return Style{"background-color":color}
+}
+
+var (
+	Css_bgcolor_black = Style{"background-color": "black"}
+)
 
 //=============================================
 //  Core  //
@@ -202,7 +210,7 @@ type Style map[string]string
 func (s Style) Marshal() string {
 	buf := make([]string, 0, len(s))
 	for key, value := range s {
-		buf = append(buf, key+":"+value)
+		buf = append(buf, key+":"+escape(value))
 	}
 	return strings.Join(buf, ";")
 }

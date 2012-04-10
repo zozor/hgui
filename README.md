@@ -4,6 +4,14 @@ Simple GUI toolkit with go
 Install
 ===========================
 
+You will need to install go-webkit and go-gtk, made by mattn for this to work
+
+`https://github.com/mattn/go-gtk`
+
+`https://github.com/mattn/go-webkit`
+
+and then
+
 `go get github.com/zozor/hgui`
 
 
@@ -13,11 +21,8 @@ The idea
 This is a gui toolkit that relies on HTML, CSS, and javascript. But as a user of this toolkit you do not have to worry about that
 although it helps understanding it.
 
-The compiled program will when run, start a server at 127.0.0.1:port, and runs the standard browser with that address.
-(it is, at the moment, up to the user of the package to set the port. The server fails if the port is taken and exits).
-
-This means the gui is rendered in the browser. You cannot open another tab with the page, and you cannot refresh
-(doing so makes the server unreachable, and it will die in 10 seconds)
+The compiled program will, when you run it, start a server at 127.0.0.1:port, and connect to it with gtk-webkit.
+So the user of the package have to make sure somehow that the port is free to be used.
 
 To make a simple interface, no knowledge of html, javascript or css is needed. For styling some CSS knowledge is needed, but not much.
 
@@ -45,8 +50,6 @@ Here is a simple program. An advanced one can be found in examples
 
 Features
 ===========================
-It should support windows (confirm this for me)
-
 #### Widgets
 
 - Frames
@@ -68,6 +71,4 @@ It should support windows (confirm this for me)
 
 Issues
 ===========================
-Does it work on windows? osx? It should...
-
-I cannot test all browsers, so I only know what works in chrome and i think radioboxes have some issues on firefox or is the eventhandler..?
+Gtk sucks. It spams my face

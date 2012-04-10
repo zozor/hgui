@@ -14,5 +14,5 @@ func main() {
 		hgui.Html("<br/>"), 
 		label,
 	)
-	hgui.StartServer(800, 600, 20000, "Simple program")
+	hgui.StartServer(800, 600, 18000, "Simple program")
 }

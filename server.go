@@ -13,6 +13,10 @@ import (
 var firstTimeRequest = true
 
 var resources = map[string][]byte{}
+//When you compile a file, be it image, or page or whatever, to a []byte, it can be used with this map.
+//when the page is requested on the server, fx. /img/cat.jpg, it will write the bytes in 
+//		hgui.SetResource(map[string][]byte{"/img/cat.jpg", catpicvar})
+//back to the client.
 func SetResource(files map[string][]byte) {
 	resources = files
 }
@@ -20,7 +24,8 @@ func SetResource(files map[string][]byte) {
 var handlers = map[string]func() {}
 var Topframe = &frame{newWidget(), make([]HTMLer, 0, 20), true}
 
-//This starts the server with the address addr. should be localhost:23192 (or some other port)
+//This starts the server on the specified port. It also runs the mainloop for webkit.
+//It also takes width and heigh + a title for the window to appear in.
 func StartServer(width, height, port int, title string) { //"127.0.0.1:3939"
 	http.Handle("/", http.HandlerFunc(requests))
 	addr := fmt.Sprintf("127.0.0.1:%d", port)

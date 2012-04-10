@@ -59,6 +59,7 @@ var (
 //=============================================
 //  TextType Declartions  //
 //=============================================
+type texttype string
 
 var (
 	TextType_Password = texttype("password")
@@ -273,30 +274,36 @@ func (w *widget) ID() string {
 	return w.id
 }
 
+//Sets a style for a widget
 func (w *widget) SetStyle(style Style) {
 	w.style = style
 	js := jq(w.id, `attr("style", "`+style.Marshal()+`")`)
 	events <- Event(js, nil)
 }
 
+//returns the style of a widget
 func (w *widget) Style() Style {
 	return w.style
 }
 
+//Adds a style to existing style on the widget
 func (w *widget) AddStyle(n Style) {
 	w.style.AddStyle(n)
 	w.SetStyle(w.style)
 }
 
+//Removes a style from the widget, specified by the n style
 func (w *widget) RemoveStyle(n Style) {
 	w.style.RemoveStyle(n)
 	w.SetStyle(w.style)
 }
 
+//Hides the widget
 func (w *widget) Hide() {
 	events <- Event(jq(w.id, "hide()"), nil)
 }
 
+//Shows the widget
 func (w *widget) Show() {
 	events <- Event(jq(w.id, "show()"), nil)
 }
@@ -307,12 +314,15 @@ func (w *widget) SetAttribute(attribute, value string) {
 }
 
 //Not everything can be removed, see $.removeAttr() in jquery for details
+//The use of frame.Flip, removes everything made through this call.
+//If used with flip, it should be called afterwards
 func (w *widget) RemoveAttribute(attr string) {
 	events <- Event(jq(w.id, "removeAttr('"+attr+"')"), nil)
 }
 
 //This is set ONLY on the client side, the server does not record this.
 //The use of frame.Flip, removes everything made through this call
+//If used with flip, it should be called afterwards.
 func (w *widget) SetEvent(event evtType, action func()) {
 	if action == nil {
 		return
@@ -324,20 +334,25 @@ func (w *widget) SetEvent(event evtType, action func()) {
 //=============================================
 //  Frame  //
 //=============================================
+
 type frame struct {
 	*widget
 	content []HTMLer
 	topframe bool
 }
 
+//Creates a new container for your widgets
 func NewFrame(styles ...Style) *frame {
 	return &frame{newWidget(styles...), make([]HTMLer, 0, 20), false}
 }
 
+//Add widget to your frame
 func (f *frame) Add(widget ...HTMLer) {
 	f.content = append(f.content, widget...)
 }
 
+//Resets the content of the frame. Events on widgets should be reassigned after using this.
+//The function has it's usefulness, but should seldom be used.
 func (f *frame) Flip() {
 	buf := make([]string, len(f.content))
 	for i, v := range f.content {
@@ -360,15 +375,18 @@ func (f *frame) HTML() string {
 //=============================================
 //  Label  //
 //=============================================
+
 type label struct {
 	*widget
 	value string
 }
 
+//Creates a new label with a value
 func NewLabel(value string, styles ...Style) *label {
 	return &label{newWidget(styles...), value}
 }
 
+//Gets the value of the label
 func (l *label) Value() string {
 	reply := make(chan string)
 	evt := Event(fmt.Sprintf(`reply = $("#%s").html()`, l.id), reply)
@@ -376,6 +394,7 @@ func (l *label) Value() string {
 	return <-evt.reply
 }
 
+//Set the value of the label
 func (l *label) SetValue(s string) {
 	events <- Event(fmt.Sprintf(`$("#%s").html("%s")`, l.id, escape(s)), nil)
 }
@@ -387,12 +406,14 @@ func (l *label) HTML() string {
 //=============================================
 //  Button  //
 //=============================================
+
 type button struct {
 	*widget
 	value  string
 	action func()
 }
 
+//Creates a new button, with a caption and a callback
 func NewButton(value string, styles []Style, action func()) *button {
 	b := &button{newWidget(styles...), value, action}
 	if action != nil {
@@ -409,11 +430,13 @@ func (b *button) HTML() string {
 //=============================================
 //  Table  //
 //=============================================
+
 type table struct {
 	*widget
 	rows []*row
 }
 
+//Creates a grid to put stuff into
 func NewTable(styles []Style, r ...*row) *table {
 	return &table{newWidget(styles...), r}
 }
@@ -431,6 +454,8 @@ func (t *table) HTML() (html string) {
 	return
 }
 
+
+//you put this into your table/grid. It's a row.
 type row struct {
 	*widget
 	cells []*cell
@@ -461,6 +486,7 @@ type cell struct {
 	content HTMLer
 }
 
+//Does this need introduction? Colspan tells the cell how many columns to span across, and rowspan how many rows..
 func NewCell(header bool, colspan, rowspan int, content HTMLer, styles ...Style) *cell {
 	return &cell{newWidget(styles...), header, colspan, rowspan, content}
 }
@@ -484,20 +510,19 @@ func (t *cell) HTML() (html string) {
 //=============================================
 //  Textinput  //
 //=============================================
+
 type textinput struct {
 	*widget
 	value string
 	_type string
 }
 
-type texttype string
-
-
-
+//Creates a inpup field for text
 func NewTextinput(value string, ttype texttype,styles ...Style) *textinput {
 	return &textinput{newWidget(styles...), value, string(ttype)}
 }
 
+//Grabs the value of the textinput
 func (t *textinput) Value() string {
 	reply := make(chan string)
 	evt := Event(fmt.Sprintf(`reply = $("#%s").val()`, t.id), reply)
@@ -505,6 +530,7 @@ func (t *textinput) Value() string {
 	return <-evt.reply
 }
 
+//Sets the value of the input
 func (t *textinput) SetValue(s string) {
 	events <- Event(fmt.Sprintf(`$("#%s").val("%s")`, t.id, escape(s)), nil)
 }
@@ -516,11 +542,13 @@ func (t *textinput) HTML() string {
 //=============================================
 //  Textarea  //
 //=============================================
+
 type textarea struct {
 	*widget
 	value string
 }
 
+//Multiline text input
 func NewTextarea(value string, styles ...Style) *textarea {
 	return &textarea{newWidget(styles...), value}
 }
@@ -537,22 +565,26 @@ func (t *textarea) SetValue(s string) {
 }
 
 func (t *textarea) HTML() string {
-	return `<textarea id="` + t.id + `" style="`+t.style.Marshal()+`"></textarea>`
+	return `<textarea id="` + t.id + `" style="`+t.style.Marshal()+`">`+t.value+`</textarea>`
 }
 
 //=============================================
 //  Radiobuttons checkboxes  //
 //=============================================
-type radiocheckbox struct { //TODO: Lav det færdigt
+
+type radiocheckbox struct {
 	*widget
 	group   string
 	radiobox bool
 }
 
+//Creates either new radiobox or checkbox.
+//Checkboxes are not affected by the grouping
 func NewRadioCheckbox(radiobox bool, group string, styles ...Style) *radiocheckbox {
 	return &radiocheckbox{newWidget(styles...), group, radiobox}
 }
 
+//Get the state of a radiobox/checkbox
 func (t *radiocheckbox) Checked() bool {
 	reply := make(chan string)
 	evt := Event(`reply = $("#`+t.id+`").prop("checked")`, reply)
@@ -563,10 +595,12 @@ func (t *radiocheckbox) Checked() bool {
 	return false
 }
 
+//Checks the checkbox/radiobox
 func (t *radiocheckbox) Check() {
 	events <- Event(jq(t.id, `prop("checked", "checked")`), nil)
 }
 
+//Unchecks the checkbox/radiobox
 func (t *radiocheckbox) Uncheck() {
 	events <- Event(jq(t.id, `prop("checked", false)`), nil)
 }
@@ -581,11 +615,13 @@ func (t *radiocheckbox) HTML() string {
 //=============================================
 //  Image  //
 //=============================================
+
 type image struct {
 	*widget
 	src string
 }
 
+//New image...
 func NewImage(src string, styles ...Style) *image {
 	return &image{newWidget(styles...), src}
 }
@@ -597,6 +633,8 @@ func (i *image) HTML() string {
 //=============================================
 //  Lists  //
 //=============================================
+
+//List are bullet points or numbered lists.
 type list struct {
 	*widget
 	items []*listitem
@@ -651,6 +689,7 @@ func (l *listitem) HTML() string {
 //=============================================
 //  Links  //
 //=============================================
+
 type link struct {
 	*widget
 	href  string
@@ -668,6 +707,7 @@ func (l link) HTML() string {
 //=============================================
 //  Fieldset  //
 //=============================================
+
 type fieldset struct {
 	legend  string
 	content HTMLer
@@ -684,6 +724,7 @@ func (f *fieldset) HTML() string {
 //=============================================
 //  Select  //
 //=============================================
+
 type selectform struct {
 	*widget
 	options  []*option
@@ -691,6 +732,7 @@ type selectform struct {
 	multiple bool
 }
 
+//Create new combobox, multiselection og list item.
 func NewSelect(size int, multiple bool, styles []Style, options ...*option) *selectform {
 	return &selectform{newWidget(styles...), options, size, multiple}
 }
@@ -753,6 +795,7 @@ func (o *option) HTML() string {
 //=============================================
 //  Misc  //
 //=============================================
+
 type texthmler struct {
 	value string
 }

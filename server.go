@@ -22,7 +22,7 @@ func SetResource(files map[string][]byte) {
 }
 
 var handlers = map[string]func() {}
-var Topframe = &frame{newWidget(), make([]HTMLer, 0, 20), true}
+var Topframe = &Frame{newWidget(), make([]HTMLer, 0, 20), true}
 
 //This starts the server on the specified port. It also runs the mainloop for webkit.
 //It also takes width and heigh + a title for the window to appear in.

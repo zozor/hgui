@@ -31,7 +31,6 @@ function HandleEvents(evtobjs) {
 }
 
 function handleEvent(evt) {
-	console.log(evt)
 	eval(evt.Javascript);
 	if (evt.Reply) {
 		$.ajax({

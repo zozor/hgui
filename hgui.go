@@ -1,5 +1,8 @@
 /*
 hgui is a gui toolkit for webgui
+
+Except for Style type, never, EVER use the widgets without initializing them, it probably won't work if you do that.
+All types that must be initialized has a New function (f.eks. NewFrame, NewButton...).
 */
 package hgui
 
@@ -335,25 +338,25 @@ func (w *widget) SetEvent(event evtType, action func()) {
 //  Frame  //
 //=============================================
 
-type frame struct {
+type Frame struct {
 	*widget
 	content []HTMLer
 	topframe bool
 }
 
 //Creates a new container for your widgets
-func NewFrame(styles ...Style) *frame {
-	return &frame{newWidget(styles...), make([]HTMLer, 0, 20), false}
+func NewFrame(styles ...Style) *Frame {
+	return &Frame{newWidget(styles...), make([]HTMLer, 0, 20), false}
 }
 
 //Add widget to your frame
-func (f *frame) Add(widget ...HTMLer) {
+func (f *Frame) Add(widget ...HTMLer) {
 	f.content = append(f.content, widget...)
 }
 
 //Resets the content of the frame. Events on widgets should be reassigned after using this.
 //The function has it's usefulness, but should seldom be used.
-func (f *frame) Flip() {
+func (f *Frame) Flip() {
 	buf := make([]string, len(f.content))
 	for i, v := range f.content {
 		buf[i] = v.HTML()
@@ -361,7 +364,7 @@ func (f *frame) Flip() {
 	events <- Event(jq(f.id, `html("`+escape(strings.Join(buf, ""))+`")`), nil)
 }
 
-func (f *frame) HTML() string {
+func (f *Frame) HTML() string {
 	buf := make([]string, len(f.content))
 	for i, v := range f.content {
 		buf[i] = v.HTML()
@@ -376,30 +379,30 @@ func (f *frame) HTML() string {
 //  Label  //
 //=============================================
 
-type label struct {
+type Label struct {
 	*widget
 	value string
 }
 
 //Creates a new label with a value
-func NewLabel(value string, styles ...Style) *label {
-	return &label{newWidget(styles...), value}
+func NewLabel(value string, styles ...Style) *Label {
+	return &Label{newWidget(styles...), value}
 }
 
 //Gets the value of the label
-func (l *label) Value() string {
+func (l *Label) Value() string {
 	reply := make(chan string)
 	evt := Event(fmt.Sprintf(`reply = $("#%s").html()`, l.id), reply)
 	events <- evt
 	return <-evt.reply
 }
 
-//Set the value of the label
-func (l *label) SetValue(s string) {
+//Set the value of the Label
+func (l *Label) SetValue(s string) {
 	events <- Event(fmt.Sprintf(`$("#%s").html("%s")`, l.id, escape(s)), nil)
 }
 
-func (l *label) HTML() string {
+func (l *Label) HTML() string {
 	return fmt.Sprintf(`<span id="%s" style="%s">%s</span>`, l.id, l.style.Marshal(), l.value)
 }
 
@@ -407,22 +410,22 @@ func (l *label) HTML() string {
 //  Button  //
 //=============================================
 
-type button struct {
+type Button struct {
 	*widget
 	value  string
 	action func()
 }
 
 //Creates a new button, with a caption and a callback
-func NewButton(value string, styles []Style, action func()) *button {
-	b := &button{newWidget(styles...), value, action}
+func NewButton(value string, styles []Style, action func()) *Button {
+	b := &Button{newWidget(styles...), value, action}
 	if action != nil {
 		handlers[b.id+".onclick"] = action
 	}
 	return b
 }
 
-func (b *button) HTML() string {
+func (b *Button) HTML() string {
 	return fmt.Sprintf(`<input type="button" value="%s" id="%s" onclick="callHandler('%s.onclick');" style="%s"/>`,
 		b.value, b.id, b.id, b.style.Marshal())
 }
@@ -431,21 +434,21 @@ func (b *button) HTML() string {
 //  Table  //
 //=============================================
 
-type table struct {
+type Table struct {
 	*widget
-	rows []*row
+	rows []*Row
 }
 
 //Creates a grid to put stuff into
-func NewTable(styles []Style, r ...*row) *table {
-	return &table{newWidget(styles...), r}
+func NewTable(styles []Style, r ...*Row) *Table {
+	return &Table{newWidget(styles...), r}
 }
 
-func (t *table) Addrows(r ...*row) {
+func (t *Table) Addrows(r ...*Row) {
 	t.rows = append(t.rows, r...)
 }
 
-func (t *table) HTML() (html string) {
+func (t *Table) HTML() (html string) {
 	html = `<table id="` + t.id + `" style="`+t.style.Marshal()+`">`
 	for _, v := range t.rows {
 		html += v.HTML()
@@ -456,20 +459,20 @@ func (t *table) HTML() (html string) {
 
 
 //you put this into your table/grid. It's a row.
-type row struct {
+type Row struct {
 	*widget
-	cells []*cell
+	cells []*Cell
 }
 
-func NewRow(styles []Style, c ...*cell) *row {
-	return &row{newWidget(styles...), c}
+func NewRow(styles []Style, c ...*Cell) *Row {
+	return &Row{newWidget(styles...), c}
 }
 
-func (r *row) AddCells(c ...*cell) {
+func (r *Row) AddCells(c ...*Cell) {
 	r.cells = append(r.cells, c...)
 }
 
-func (r *row) HTML() (html string) {
+func (r *Row) HTML() (html string) {
 	html = `<tr id="` + r.id + `" style="`+r.style.Marshal()+`">`
 	for _, v := range r.cells {
 		html += v.HTML()
@@ -478,7 +481,7 @@ func (r *row) HTML() (html string) {
 	return
 }
 
-type cell struct {
+type Cell struct {
 	*widget
 	header  bool
 	colspan int
@@ -487,11 +490,11 @@ type cell struct {
 }
 
 //Does this need introduction? Colspan tells the cell how many columns to span across, and rowspan how many rows..
-func NewCell(header bool, colspan, rowspan int, content HTMLer, styles ...Style) *cell {
-	return &cell{newWidget(styles...), header, colspan, rowspan, content}
+func NewCell(header bool, colspan, rowspan int, content HTMLer, styles ...Style) *Cell {
+	return &Cell{newWidget(styles...), header, colspan, rowspan, content}
 }
 
-func (t *cell) HTML() (html string) {
+func (t *Cell) HTML() (html string) {
 	if t.header {
 		html = fmt.Sprintf(`<th id="%s" colspan="%d" rowspan="%d" style="%s">`, t.id, t.colspan, t.rowspan, t.style.Marshal())
 	} else {
@@ -511,19 +514,19 @@ func (t *cell) HTML() (html string) {
 //  Textinput  //
 //=============================================
 
-type textinput struct {
+type Textinput struct {
 	*widget
 	value string
 	_type string
 }
 
 //Creates a inpup field for text
-func NewTextinput(value string, ttype texttype,styles ...Style) *textinput {
-	return &textinput{newWidget(styles...), value, string(ttype)}
+func NewTextinput(value string, ttype texttype,styles ...Style) *Textinput {
+	return &Textinput{newWidget(styles...), value, string(ttype)}
 }
 
 //Grabs the value of the textinput
-func (t *textinput) Value() string {
+func (t *Textinput) Value() string {
 	reply := make(chan string)
 	evt := Event(fmt.Sprintf(`reply = $("#%s").val()`, t.id), reply)
 	events <- evt
@@ -531,11 +534,11 @@ func (t *textinput) Value() string {
 }
 
 //Sets the value of the input
-func (t *textinput) SetValue(s string) {
+func (t *Textinput) SetValue(s string) {
 	events <- Event(fmt.Sprintf(`$("#%s").val("%s")`, t.id, escape(s)), nil)
 }
 
-func (t *textinput) HTML() string {
+func (t *Textinput) HTML() string {
 	return fmt.Sprintf(`<input type="%s" id="%s" value="%s" style="%s"/>`, t._type, t.id, t.value, t.style.Marshal())
 }
 
@@ -543,28 +546,28 @@ func (t *textinput) HTML() string {
 //  Textarea  //
 //=============================================
 
-type textarea struct {
+type Textarea struct {
 	*widget
 	value string
 }
 
 //Multiline text input
-func NewTextarea(value string, styles ...Style) *textarea {
-	return &textarea{newWidget(styles...), value}
+func NewTextarea(value string, styles ...Style) *Textarea {
+	return &Textarea{newWidget(styles...), value}
 }
 
-func (t *textarea) Value() string {
+func (t *Textarea) Value() string {
 	reply := make(chan string)
 	evt := Event(fmt.Sprintf(`reply = $("#%s").val()`, t.id), reply)
 	events <- evt
 	return <-evt.reply
 }
 
-func (t *textarea) SetValue(s string) {
+func (t *Textarea) SetValue(s string) {
 	events <- Event(fmt.Sprintf(`$("#%s").text("%s")`, t.id, escape(s)), nil)
 }
 
-func (t *textarea) HTML() string {
+func (t *Textarea) HTML() string {
 	return `<textarea id="` + t.id + `" style="`+t.style.Marshal()+`">`+t.value+`</textarea>`
 }
 
@@ -572,7 +575,7 @@ func (t *textarea) HTML() string {
 //  Radiobuttons checkboxes  //
 //=============================================
 
-type radiocheckbox struct {
+type Radiocheckbox struct {
 	*widget
 	group   string
 	radiobox bool
@@ -580,12 +583,12 @@ type radiocheckbox struct {
 
 //Creates either new radiobox or checkbox.
 //Checkboxes are not affected by the grouping
-func NewRadioCheckbox(radiobox bool, group string, styles ...Style) *radiocheckbox {
-	return &radiocheckbox{newWidget(styles...), group, radiobox}
+func NewRadioCheckbox(radiobox bool, group string, styles ...Style) *Radiocheckbox {
+	return &Radiocheckbox{newWidget(styles...), group, radiobox}
 }
 
 //Get the state of a radiobox/checkbox
-func (t *radiocheckbox) Checked() bool {
+func (t *Radiocheckbox) Checked() bool {
 	reply := make(chan string)
 	evt := Event(`reply = $("#`+t.id+`").prop("checked")`, reply)
 	events <- evt
@@ -596,16 +599,16 @@ func (t *radiocheckbox) Checked() bool {
 }
 
 //Checks the checkbox/radiobox
-func (t *radiocheckbox) Check() {
+func (t *Radiocheckbox) Check() {
 	events <- Event(jq(t.id, `prop("checked", "checked")`), nil)
 }
 
 //Unchecks the checkbox/radiobox
-func (t *radiocheckbox) Uncheck() {
+func (t *Radiocheckbox) Uncheck() {
 	events <- Event(jq(t.id, `prop("checked", false)`), nil)
 }
 
-func (t *radiocheckbox) HTML() string {
+func (t *Radiocheckbox) HTML() string {
 	if t.radiobox {
 		return fmt.Sprintf(`<input type="radio" id="%s" name="%s" style="%s"/>`, t.id, t.group, t.style.Marshal())
 	}
@@ -616,17 +619,17 @@ func (t *radiocheckbox) HTML() string {
 //  Image  //
 //=============================================
 
-type image struct {
+type Image struct {
 	*widget
 	src string
 }
 
 //New image...
-func NewImage(src string, styles ...Style) *image {
-	return &image{newWidget(styles...), src}
+func NewImage(src string, styles ...Style) *Image {
+	return &Image{newWidget(styles...), src}
 }
 
-func (i *image) HTML() string {
+func (i *Image) HTML() string {
 	return fmt.Sprintf(`<img id="%s" src="%s" style="%s"/>`, i.id, i.src, i.style.Marshal())
 }
 
@@ -635,17 +638,17 @@ func (i *image) HTML() string {
 //=============================================
 
 //List are bullet points or numbered lists.
-type list struct {
+type List struct {
 	*widget
-	items []*listitem
+	items []*Listitem
 	ordered bool
 }
 
-func NewList(ordered bool, styles []Style, items ...*listitem) *list {
-	return &list{newWidget(styles...), items, ordered}
+func NewList(ordered bool, styles []Style, items ...*Listitem) *List {
+	return &List{newWidget(styles...), items, ordered}
 }
 
-func (l *list) SetList(items ...*listitem) {
+func (l *List) SetList(items ...*Listitem) {
 	l.items = items
 	html := ""
 	for _, v := range l.items {
@@ -654,7 +657,7 @@ func (l *list) SetList(items ...*listitem) {
 	events <- Event(jq(l.id, `html("`+escape(html)+`")`), nil)
 }
 
-func (l *list) HTML() (html string) {
+func (l *List) HTML() (html string) {
 	if l.ordered {
 		html = fmt.Sprintf(`<ol id="%s" style="%s">`, l.id, l.style.Marshal())
 	} else {
@@ -673,16 +676,16 @@ func (l *list) HTML() (html string) {
 	return
 }
 
-type listitem struct {
+type Listitem struct {
 	*widget
 	value string
 }
 
-func NewListItem(value string, styles ...Style) *listitem {
-	return &listitem{newWidget(styles...), value}
+func NewListItem(value string, styles ...Style) *Listitem {
+	return &Listitem{newWidget(styles...), value}
 }
 
-func (l *listitem) HTML() string {
+func (l *Listitem) HTML() string {
 	return fmt.Sprintf(`<li id="%s">%s</li>`, l.id, l.value)
 }
 
@@ -690,17 +693,17 @@ func (l *listitem) HTML() string {
 //  Links  //
 //=============================================
 
-type link struct {
+type Link struct {
 	*widget
 	href  string
 	value HTMLer
 }
 
-func NewLink(href string, value HTMLer, styles ...Style) *link {
-	return &link{newWidget(styles...), href, value}
+func NewLink(href string, value HTMLer, styles ...Style) *Link {
+	return &Link{newWidget(styles...), href, value}
 }
 
-func (l link) HTML() string {
+func (l *Link) HTML() string {
 	return fmt.Sprintf(`<a href="%s" id="%s" style="%s">%s</a>`, l.href, l.id, l.style.Marshal(), l.value.HTML())
 }
 
@@ -708,16 +711,16 @@ func (l link) HTML() string {
 //  Fieldset  //
 //=============================================
 
-type fieldset struct {
+type Fieldset struct {
 	legend  string
 	content HTMLer
 }
 
-func NewFieldset(caption string, content HTMLer) *fieldset {
-	return &fieldset{caption, content}
+func NewFieldset(caption string, content HTMLer) *Fieldset {
+	return &Fieldset{caption, content}
 }
 
-func (f *fieldset) HTML() string {
+func (f *Fieldset) HTML() string {
 	return `<fieldset><legend>` + f.legend + `</legend>` + f.content.HTML() + `</fieldset>`
 }
 
@@ -725,19 +728,19 @@ func (f *fieldset) HTML() string {
 //  Select  //
 //=============================================
 
-type selectform struct {
+type Selectform struct {
 	*widget
-	options  []*option
+	options  []*Option
 	size     int
 	multiple bool
 }
 
 //Create new combobox, multiselection og list item.
-func NewSelect(size int, multiple bool, styles []Style, options ...*option) *selectform {
-	return &selectform{newWidget(styles...), options, size, multiple}
+func NewSelect(size int, multiple bool, styles []Style, options ...*Option) *Selectform {
+	return &Selectform{newWidget(styles...), options, size, multiple}
 }
 
-func (s *selectform) HTML() (html string) {
+func (s *Selectform) HTML() (html string) {
 	if s.multiple {
 		html = fmt.Sprintf(`<select id="%s" size="%d" style="%s" multiple>`, s.id, s.size, s.style.Marshal())
 	} else {
@@ -750,7 +753,7 @@ func (s *selectform) HTML() (html string) {
 	return
 }
 
-func (s *selectform) SetOptions(o ...*option) {
+func (s *Selectform) SetOptions(o ...*Option) {
 	s.options = o
 	html := ""
 	for _, v := range s.options {
@@ -759,7 +762,7 @@ func (s *selectform) SetOptions(o ...*option) {
 	events <- Event(jq(s.id, "html('"+escape(html)+"')"), nil)
 }
 
-func (s *selectform) Selected() (string, []string) {
+func (s *Selectform) Selected() (string, []string) {
 	reply := make(chan string)
 	evt := Event(fmt.Sprintf(`reply = $("#%s").val(); if (reply == null) {reply = ""}`, s.id), reply)
 	events <- evt
@@ -769,26 +772,26 @@ func (s *selectform) Selected() (string, []string) {
 	return <-evt.reply, nil
 }
 
-type option struct {
+type Option struct {
 	*widget
 	value string
 	text  string
 }
 
-func NewOption(value, text string) *option {
-	out := &option{newWidget(), value, text}
+func NewOption(value, text string) *Option {
+	out := &Option{newWidget(), value, text}
 	return out
 }
 
-func NewOptions(values ...string) []*option {
-	buf := make([]*option, len(values))
+func NewOptions(values ...string) []*Option {
+	buf := make([]*Option, len(values))
 	for i, v := range values {
 		buf[i] = NewOption(v, v)
 	}
 	return buf
 }
 
-func (o *option) HTML() string {
+func (o *Option) HTML() string {
 	return fmt.Sprintf(`<option id="%s" value="%s" style="%s">%s</option>`, o.id, o.value, o.style.Marshal(), o.text)
 }
 
@@ -808,6 +811,7 @@ func Html(value string) HTMLer {
 	return texthmler{value}
 }
 
+//Javascript alert
 func Alert(s string) {
 	events <- Event("alert("+escape(s)+");", nil)
 }

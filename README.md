@@ -4,13 +4,7 @@ Simple GUI toolkit with go
 Install
 ===========================
 
-You will need to install go-webkit and go-gtk, made by mattn for this to work
-
-`https://github.com/mattn/go-gtk`
-
-`https://github.com/mattn/go-webkit`
-
-and then
+You will need to install gtk-dev files.
 
 `go get github.com/zozor/hgui`
 

@@ -45,7 +45,7 @@ Here is a simple program. An advanced one can be found in examples
 			hgui.Html("<br/>"), 
 			label,
 		)
-		hgui.StartServer(20000)
+		hgui.StartServer(800, 600, 20000, "Simple program!")
 	}
 
 Features

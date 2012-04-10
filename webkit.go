@@ -22,6 +22,10 @@ static void loadHtmlString(GtkWidget* widget, gchar* pcontent, gchar* pbase_uri)
 static void connect_destroy(GtkWidget* window) {
 	gtk_signal_connect(GTK_OBJECT(window), "destroy", GTK_SIGNAL_FUNC(gtk_exit), NULL);
 }
+
+static void loadUri(GtkWidget *widget, gchar* uri) {
+	webkit_web_view_load_uri(WEBKIT_WEB_VIEW(widget), uri);
+}
 */
 import "C"
 import "fmt"
@@ -40,10 +44,7 @@ func startGui(width, height int, title string, port int) {
 	
 	C.gtk_container_add(C.to_GtkContainer(vbox), webview);
 
-	embed := `
-<iframe width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://127.0.0.1:`+fmt.Sprintf("%d", port)+`"></iframe>
-`
-	loadHtmlString(webview, embed, ".")	
+	C.loadUri(webview, C.to_gcharptr(C.CString(fmt.Sprintf("http://127.0.0.1:%d", port))))
 
 	C.gtk_container_add(C.to_GtkContainer(window), vbox)
 	C.gtk_widget_set_size_request(window, C.gint(width), C.gint(height))

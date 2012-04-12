@@ -15,8 +15,7 @@ The idea
 This is a gui toolkit that relies on HTML, CSS, and javascript. But as a user of this toolkit you do not have to worry about that
 although it helps understanding it.
 
-The compiled program will, when you run it, start a server at 127.0.0.1:port, and connect to it with gtk-webkit.
-So the user of the package have to make sure somehow that the port is free to be used.
+The compiled program will, when you run it, start a server at 127.0.0.1:randomport, and connect to it with gtk-webkit.
 
 To make a simple interface, no knowledge of html, javascript or css is needed. For styling some CSS knowledge is needed, but not much.
 
@@ -39,7 +38,7 @@ Here is a simple program. An advanced one can be found in examples
 			hgui.Html("<br/>"), 
 			label,
 		)
-		hgui.StartServer(800, 600, 20000, "Simple program!")
+		hgui.StartServer(800, 600, "Simple program!")
 	}
 
 Features
@@ -57,6 +56,7 @@ Features
 - Buttons
 - Links
 - Images
+- Modal Dialogs
 
 #### Other
 - Styling with css
@@ -65,4 +65,4 @@ Features
 
 Issues
 ===========================
-Gtk sucks. It spams my face
+Gtk sucks. It spams my face with errors.

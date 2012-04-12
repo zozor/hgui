@@ -106,5 +106,5 @@ func main() {
 	)
 	hgui.Topframe.Add(table)
 	hgui.Topframe.AddStyle(hgui.Css_bgcolor("green"))
-	hgui.StartServer(600, 450, 20000, "Anime Manager")
+	hgui.StartServer(600, 450, "Anime Manager")
 } 

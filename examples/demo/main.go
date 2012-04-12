@@ -221,5 +221,5 @@ func main() {
 		ramme3,hgui.Html("<br/>"),hgui.Html("<br/>"),
 		ramme4,
 	)
-	hgui.StartServer(800,600,20000, "Demo!")
+	hgui.StartServer(800,600, "Demo!")
 }

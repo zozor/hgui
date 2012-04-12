@@ -18,6 +18,7 @@ import (
 	"runtime"
 )
 
+
 //=============================================
 //  Variable Declartions  //
 //=============================================
@@ -367,7 +368,7 @@ func (f *Frame) Flip() {
 func (f *Frame) HTML() string {
 	buf := make([]string, len(f.content))
 	for i, v := range f.content {
-		buf[i] = v.HTML()
+		buf[i] = v.HTML()+"\n"
 	}
 	if f.topframe {
 		return fmt.Sprintf(`<body id="%s" style="%s">%s</body>`, f.id, f.style.Marshal(), strings.Join(buf, ""))
@@ -426,7 +427,7 @@ func NewButton(value string, styles []Style, action func()) *Button {
 }
 
 func (b *Button) HTML() string {
-	return fmt.Sprintf(`<input type="button" value="%s" id="%s" onclick="callHandler('%s.onclick');" style="%s"/>`,
+	return fmt.Sprintf(`<input type="button" value="%s" id="%s" onclick="callHandler('%s.onclick');" style="%s" />`,
 		b.value, b.id, b.id, b.style.Marshal())
 }
 
@@ -451,7 +452,7 @@ func (t *Table) Addrows(r ...*Row) {
 func (t *Table) HTML() (html string) {
 	html = `<table id="` + t.id + `" style="`+t.style.Marshal()+`">`
 	for _, v := range t.rows {
-		html += v.HTML()
+		html += v.HTML()+"\n"
 	}
 	html += "</table>"
 	return
@@ -475,7 +476,7 @@ func (r *Row) AddCells(c ...*Cell) {
 func (r *Row) HTML() (html string) {
 	html = `<tr id="` + r.id + `" style="`+r.style.Marshal()+`">`
 	for _, v := range r.cells {
-		html += v.HTML()
+		html += v.HTML()+"\n"
 	}
 	html += "</tr>"
 	return
@@ -665,7 +666,7 @@ func (l *List) HTML() (html string) {
 	}
 	
 	for _, v := range l.items {
-		html += v.HTML()
+		html += v.HTML()+"\n"
 	}
 	
 	if l.ordered {
@@ -747,7 +748,7 @@ func (s *Selectform) HTML() (html string) {
 		html = fmt.Sprintf(`<select id="%s" size="%d" style="%s">`, s.id, s.size, s.style.Marshal())
 	}
 	for _, v := range s.options {
-		html += v.HTML()
+		html += v.HTML()+"\n"
 	}
 	html += "</select>"
 	return
@@ -793,6 +794,50 @@ func NewOptions(values ...string) []*Option {
 
 func (o *Option) HTML() string {
 	return fmt.Sprintf(`<option id="%s" value="%s" style="%s">%s</option>`, o.id, o.value, o.style.Marshal(), o.text)
+}
+
+//=============================================
+//  Select  //
+//=============================================
+
+type Modal struct {
+	*widget
+	content HTMLer
+	width int
+	height int
+}
+
+func NewModal(width, height int) *Modal {
+	s := Style{
+		"display": "none",
+		"position": "absolute",
+		"left": "0px",
+		"top": "0px",
+		"width":"100%",
+		"height":"100%",
+		"text-align":"center",
+		"z-index": "1000",
+		"background": "rgba(0, 0, 0, 0.6)",
+	}
+	return &Modal{newWidget(s), Html(""), width, height}
+}
+
+func (m *Modal) SetContent(content HTMLer) {
+	m.content = content
+}
+
+func (m *Modal) HTML() string {
+	underlaystyle := Style{
+		"width": fmt.Sprintf("%dpx", m.width),
+		"height": fmt.Sprintf("%dpx", m.height),
+		"margin": "20% auto",
+		"background-color": "white",
+		"border":"1px solid #000",
+		"padding":"15px",
+		"text-align":"center",
+	}
+	return fmt.Sprintf(`<div style="%s" id="%s"><div style="%s">%s</div></div>`,
+	m.style.Marshal(), m.id, underlaystyle.Marshal(), m.content.HTML())
 }
 
 //=============================================

@@ -892,6 +892,31 @@ func (g *Gauge) HTML() string {
 //=============================================
 
 //=============================================
+//  Spincontrol  //
+//=============================================
+/*
+Da fuck am I gonna do here D:
+type Spinctrl struct {
+	*widget
+	value int
+	min int
+	max int
+	step int
+}
+
+func NewSpinctrl(value, min, max, step int) *Spinctrl { //&#x25B2; UP --- &#x25BC; DOWN
+	return &Spinctrl{newWidget(), value, min, max, step}
+}
+
+func (s *Spinctrl) HTML() string {
+	html := fmt.Sprintf(`
+	<input type="text" value="%s" id="%s-tekst"/>
+	<input type="button" value="&#x25B2;" id="%s-op" onclick="" style="vertical-align:super;height:5px;"/>
+	<input type="button" value="&#x25BC;" id="%s-ned" onclick="" style="vertical-align:sub;height:5px;"/>
+	`)
+}
+*/
+//=============================================
 //  Misc  //
 //=============================================
 

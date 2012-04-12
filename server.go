@@ -25,7 +25,7 @@ func SetResource(files map[string][]byte) {
 	resources = files
 }
 
-var handlers = map[string]func() {}
+var handlers = map[string]func() {} //TODO:THIS HANDLER NEVER GETS CLEANED UP
 var Topframe = &Frame{newWidget(), make([]HTMLer, 0, 20), true}
 
 //This starts the server on the specified port. It also runs the mainloop for webkit.

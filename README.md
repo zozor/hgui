@@ -41,6 +41,7 @@ Here is a simple program. An advanced one can be found in examples
 		hgui.StartServer(800, 600, "Simple program!")
 	}
 
+
 Features
 ===========================
 #### Widgets
@@ -63,6 +64,42 @@ Features
 - Styling with css
 - Raw javascript
 - Resources (it actually does not allow anything else)
+- Everything that can be made in html/css/javascript can be used here. Making it somewhat more powerfull than GTK?.
+
+How it works
+===========================
+We start with the last part for clarity
+
+	`StartServer(width, height, title)`
+
+Starts a http server, creates a window with gtk, adds webkit to that window and make webkit connect to the server.
+
+The two first lines in main() creates two widgets for use.
+
+	`hgui.Topframe.Add(...HTMLer)`
+
+Adds widgets between <body></body> in the outputtet html. We first add `input` to the body.
+Then we make a button widget with an onclick event. `HTMLer` is an interface{HTML() string}
+
+When this button is created, it puts the function in a `map[id.onclick]func()`, puts javascript on the button in webkit
+`onclick="callhandler(id.onclick)"`. An ajax query is sent with the ID to call the function specified in NewButton.
+
+	`label.SetValue(value)`
+
+This sends a javascript event to webkit. All events are send through a bufferede channel with some javascript code to run and a reply channel.
+This can also be done using the function `SendEvent(javascript, replychannel)`. But the widgets do this for you.
+
+This event channel is emptied by webkit 100 times a second, and runs the javascript inside them in order they came.
+
+	`input.GetValue()`
+
+This will use the replychannel, the SetX methods has a nil reply channel. Events that require a reply usually have the javascript
+part of the event as follows `SendEvent("reply = ...", replychannel). Webkit runs the javascript, and returns a `String(reply)` to
+the return channel. In the package it usually looks like this
+
+	reply := make(chan string)
+	events <- Event("reply = ...", reply)
+	return <-reply
 
 Issues
 ===========================

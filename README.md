@@ -73,7 +73,7 @@ This event channel is emptied by webkit 100 times a second, and runs the javascr
 	input.GetValue()
 
 This will use the replychannel, the SetX methods has a nil reply channel. Events that require a reply have to include the variable `reply` in the javascript. So the events look like this `SendEvent("reply = ...", replychannel)`. Webkit runs the javascript, and returns a `String(reply)` to
-the return channel. In the package's varies Value() methods, it usually looks like this
+the return channel. In the package's various Value() methods, it usually looks like this
 
 	reply := make(chan string)
 	events <- Event("reply = ...", reply)

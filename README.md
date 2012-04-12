@@ -105,6 +105,15 @@ Features
 - Resources (it actually does not allow anything else)
 - Everything that can be made in html/css/javascript can be used here. Making it somewhat more powerfull than GTK?.
 
+Contribution - Help me out!
+===============================
+If you are badass to css, javascript and html, please contribute, as we need more widgets.
+If you do not want to work with the internals of the package, you can just send the html/css/js and i will make it happen.
+
+If you got any ideas for widgets, API change, design or whatever, please speak your mind.
+
+All help and contribution is appriciated :)
+
 Issues
 ===========================
 Gtk sucks. It spams my face with errors.

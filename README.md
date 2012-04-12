@@ -68,16 +68,18 @@ When this button is created, it puts the function in a `map[id.onclick]func()`, 
 This sends a javascript event to webkit. All events are send through a bufferede channel with some javascript code to run and a reply channel.
 This can also be done using the function `SendEvent(javascript, replychannel)`. But the widgets do this for you.
 
-This event channel is emptied by webkit 100 times a second, and runs the javascript inside them in order they came.
+This event channel is emptied by webkit 100 times a second, and runs the javascript inside them in the order they came in.
 
 	input.GetValue()
 
-This will use the replychannel, the SetX methods has a nil reply channel. Events that require a reply have include the variable `reply` in the javascript. So the events look like this `SendEvent("reply = ...", replychannel)`. Webkit runs the javascript, and returns a `String(reply)` to
-the return channel. In the package\'s varies Value() methods, it usually looks like this
+This will use the replychannel, the SetX methods has a nil reply channel. Events that require a reply have to include the variable `reply` in the javascript. So the events look like this `SendEvent("reply = ...", replychannel)`. Webkit runs the javascript, and returns a `String(reply)` to
+the return channel. In the package's varies Value() methods, it usually looks like this
 
 	reply := make(chan string)
 	events <- Event("reply = ...", reply)
 	return <-reply
+
+And ofcourse, jquery is part of the package, making everything extremely easy.
 
 Features
 ===========================

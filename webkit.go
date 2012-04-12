@@ -73,3 +73,11 @@ func loadHtmlString(webview *C.GtkWidget, content, base_uri string) {
 	defer C.free_string(pbase_uri)
 	C.loadHtmlString(webview, C.to_gcharptr(pcontent), C.to_gcharptr(pbase_uri))
 }
+
+//=============================================
+//  Statusbar  //
+//=============================================
+
+//=============================================
+//  Window Options  //
+//=============================================

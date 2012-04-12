@@ -841,6 +841,57 @@ func (m *Modal) HTML() string {
 }
 
 //=============================================
+//  Slider  //
+//=============================================
+
+//=============================================
+//  Gauge  //
+//=============================================
+
+type Gauge struct {
+	*widget
+	value int
+	width int
+	color string
+}
+
+func NewGauge(value, width int, color string) *Gauge {
+	s := Style{"border":"black solid 1px", "vertical-align": "middle"}
+	g := &Gauge{newWidget(s), value, width, color}
+	g.SetValue(value)
+	return g
+}
+
+func (g *Gauge) SetValue(pct int) {
+	switch {
+	case pct > 100: pct = 100
+	case pct < 0: pct = 0
+	}
+	js := fmt.Sprintf(`
+	canvas = document.getElementById("%s");
+	ctx = canvas.getContext("2d");  
+  
+    ctx.fillStyle = "%s";  
+    ctx.fillRect (0, 0, %d, 20);
+	`, g.id, g.color, g.width*pct/100)
+	g.value = pct
+	events <- Event(js, nil)
+}
+
+func (g *Gauge) Value() int {
+	return g.value
+}
+
+func (g *Gauge) HTML() string {
+	return fmt.Sprintf(`<canvas id="%s" width="%d" height="20" style="%s"></canvas>`, g.id, g.width, g.style)
+}
+
+
+//=============================================
+//  Treecontrol  //
+//=============================================
+
+//=============================================
 //  Misc  //
 //=============================================
 

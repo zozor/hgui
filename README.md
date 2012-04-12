@@ -57,6 +57,7 @@ Features
 - Links
 - Images
 - Modal Dialogs
+- Gauge
 
 #### Other
 - Styling with css

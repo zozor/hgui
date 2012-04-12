@@ -134,7 +134,7 @@ func main() {
 		hgui.NewLink("#", hgui.NewImage("/pics/test.jpg")),
 	)
 	
-	/*Test of Select input*/
+	/*Test of Select input and Gauge*/
 	ramme4 := hgui.NewFrame()
 	select1 := hgui.NewSelect(10, true, nil,
 		hgui.NewOptions("aaaaaa","bbbbbb","cccccc","dddddd")...
@@ -146,6 +146,9 @@ func main() {
 		hgui.NewOptions("aaaaaa","bbbbbb","cccccc","dddddd")...
 	)
 	text8 := hgui.NewLabel("")
+	
+	gauge := hgui.NewGauge(10, 100, "red")
+	
 	ramme4.Add(select1, select2,select3,hgui.Html("<br/>"), text8,hgui.Html("<br/>"),
 		hgui.NewButton("Get Multiple", nil, func(){
 			_, v := select1.Selected()
@@ -162,13 +165,23 @@ func main() {
 		}),
 		hgui.NewButton("Clear!", nil, func(){
 			select2.SetOptions()
+		}),hgui.Html("<br/>"),
+		
+		gauge,hgui.Html("<br/>"),
+		hgui.NewButton("Change Gauge!", nil, func(){
+			gauge.SetValue(gauge.Value()+5)
 		}),
 	)
 	
+	
+	
+	
+	
+	/*Test of Buttons, widget type*/
 	ramme.Hide()
 	ramme3.Hide()
 	ramme4.Hide()
-	/*Test of Buttons, widget type, link and image*/
+		
 	hgui.Topframe.Add(
 		hgui.NewButton("Frame 1", nil, func() {
 			toptable.Show()

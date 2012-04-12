@@ -45,7 +45,7 @@ Features
 ===========================
 #### Widgets
 
-- Frames
+- Frames / Container
 - Tables
 - Radio and Check boxes
 - Fieldset

@@ -117,3 +117,10 @@ All help and contribution is appriciated :)
 Issues
 ===========================
 Gtk sucks. It spams my face with errors.
+
+I can remove the 100 requests per second and deal with events on time if i could get this to work
+
+	webkit_web_view_execute_script(WEBKIT_WEB_VIEW(webview), "alert('hej');");
+
+This call i supposed to run the script `alert('hej');` in webkit. I could make it run `GetEvents()`, which is now being called
+with `setInterval()` to fetch the events. Unfortunatly i get a "Parse Error", and nothing makes sense. I have no way of debugging this.
